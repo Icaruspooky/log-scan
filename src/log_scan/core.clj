@@ -1,12 +1,11 @@
 (ns log-scan.core
   (:require [clojure.string :as str])
   (:require [clojure.data.xml :as xml])
-  (:import [org.apache.commons.lang3 StringUtils])
-  (:import [java.io BufferedReader]))
+  (:import [org.apache.commons.lang3 StringUtils]))
 
 (defn -main
   [& args]
-  (println "Input file path")
+  (println "Input file path:")
   (def file-path (read-line))
   (def file (slurp file-path))
   (def lines (str/split-lines file))
@@ -33,7 +32,7 @@
                                 ;  (if (not= aux thread) (xml/element :get {} "2010-10-06 09:03:05,873")))
                                 ))
                    (xml/element :summary {}
-                                (xml/element :count {} (count (for [thread threads] (for [line thread](if (str/includes? line "Executing request startRendering") 1)))))
+                                (xml/element :count {} (reduce +(for [line lines] (if (str/includes? line "Executing request startRendering") 1 0))))
                  (xml/element :duplicates {} (count threads))
                                 (xml/element :unnecessary {} (count threads)))))
   (println (xml/emit-str xml-report)))
