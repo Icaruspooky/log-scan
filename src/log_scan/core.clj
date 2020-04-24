@@ -1,15 +1,19 @@
 (ns log-scan.core
   (:require [clojure.string :as str])
   (:require [clojure.data.xml :as xml])
-  (:import [org.apache.commons.lang3 StringUtils]))
+  (:import [org.apache.commons.lang3 StringUtils])
+  (:import [java.io BufferedReader]))
 
 (defn -main
   [& args]
-  (def file (slurp "/home/icarus/dev/test.log"))
+  (println "Input file path")
+  (def file-path (read-line))
+  (def file (slurp file-path))
   (def lines (str/split-lines file))
   (def thread-names (distinct (for [line lines] (StringUtils/substringBefore (StringUtils/substringAfter line "[") "]"))))
   (def threads (for [thread thread-names]
                       (filter #(str/includes? % thread) lines)))
+
   (def xml-report
     (xml/element :report {}
                  (for [thread threads]
@@ -23,12 +27,13 @@
                                 (for [line thread]
                                   (if (str/includes? line "Service startRendering returned")
                                     (xml/element :uid {} (StringUtils/substringBefore (StringUtils/substringAfter line "Service startRendering returned ") " "))))
-                                (for [aux threads]
-                                  (if (not= aux thread) (xml/element :start {} "2010-10-06 09:03:05,873")))
-                                (for [aux threads]
-                                  (if (not= aux thread) (xml/element :get {} "2010-10-06 09:03:05,873")))))
+                                ;(for [aux threads]
+                                ;  (if (not= aux thread) (xml/element :start {} "2010-10-06 09:03:05,873")))
+                                ;(for [aux threads]
+                                ;  (if (not= aux thread) (xml/element :get {} "2010-10-06 09:03:05,873")))
+                                ))
                    (xml/element :summary {}
-                                (xml/element :count {} (count threads))
-                                (xml/element :duplicates {} (count threads))
+                                (xml/element :count {} (count (for [thread threads] (for [line thread](if (str/includes? line "Executing request startRendering") 1)))))
+                 (xml/element :duplicates {} (count threads))
                                 (xml/element :unnecessary {} (count threads)))))
   (println (xml/emit-str xml-report)))
