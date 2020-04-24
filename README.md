@@ -6,6 +6,7 @@ Receives a log file input and prints XML containing relevant information about l
 
 Generates XML following this pattern:
 
+```xml
 <report>
   <rendering>
     <!-- Document id -->
@@ -34,7 +35,7 @@ Generates XML following this pattern:
     <unnecessary>0</unnecessary>
   </summary>
 </report>
-
+```
 
 ## License
 
