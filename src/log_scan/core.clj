@@ -9,9 +9,12 @@
   (def file-path (read-line))
   (def file (slurp file-path))
   (def lines (str/split-lines file))
+  (def uids (frequencies (for [line lines]  (StringUtils/substringBefore (StringUtils/substringAfter line "Service startRendering returned ") " "))))
   (def thread-names (distinct (for [line lines] (StringUtils/substringBefore (StringUtils/substringAfter line "[") "]"))))
   (def threads (for [thread thread-names]
                       (filter #(str/includes? % thread) lines)))
+  (def renders (for [thread threads] (partition-by #(str/includes? % "Service startRendering returned") thread)))
+
 
   (def xml-report
     (xml/element :report {}
@@ -33,6 +36,6 @@
                                 ))
                    (xml/element :summary {}
                                 (xml/element :count {} (reduce +(for [line lines] (if (str/includes? line "Executing request startRendering") 1 0))))
-                 (xml/element :duplicates {} (count threads))
+                                (xml/element :duplicates {} (reduce + (for [uid uids] (if (> (get uid 1) 1) 1 0))))
                                 (xml/element :unnecessary {} (count threads)))))
   (println (xml/emit-str xml-report)))
