@@ -7,9 +7,8 @@
   [& args]
 
   (println "Input file path:")
-  ;(def file-path (read-line))
-  ;(def file (slurp file-path))
-  (def file (slurp "/home/icarus/dev/server.log"))
+  (def file-path (read-line))
+  (def file (slurp file-path))
   (def lines (str/split-lines file))
   (def uids (frequencies (for [line lines]  (StringUtils/substringBefore (StringUtils/substringAfter line "Service startRendering returned ") " "))))
   (def thread-names (distinct (for [line lines] (StringUtils/substringBefore (StringUtils/substringAfter line "[") "]"))))
