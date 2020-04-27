@@ -76,7 +76,17 @@
                               (xml/element :count {} (reduce +(for [line lines] (if (str/includes? line "Executing request startRendering") 1 0))))
                               (xml/element :duplicates {} (reduce + (for [uid uids-freq] (if (> (get uid 1) 1) 1 0))))
                               (xml/element :unnecessary {} (reduce + (for [gets gets-freq] (if (= (get gets 1) 1) 1 0)))))))
-  (println (xml/emit-str xml-report)))
+  (println (xml/emit-str xml-report))
+  (println "Do you want so save the report? Y/N")
+  (try
+    (if (StringUtils/equalsIgnoreCase (read-line) "Y")
+      ((println "Input file destination:")
+       (with-open [out-file (java.io.OutputStreamWriter.
+                              (java.io.FileOutputStream. (str (read-line) "output.xml")) "UTF-8")]
+         (xml/emit xml-report out-file)
+         (println "File saved as output.xml!"))))
+    (catch Exception e)
+    (finally (println "Thank you for reviewing my application!"))))
 
 
 
