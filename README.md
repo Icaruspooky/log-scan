@@ -4,8 +4,13 @@ Receives a log file input and prints XML containing relevant information about l
 
 ## Usage
 
-Generates XML following this pattern:
+The file path input should be as the example bellow:
+/home/temp/server.xml
 
+The file destination input should be as the example bellow:
+/home/temp/
+
+It will generate an XML file following this pattern:
 ```xml
 <report>
   <rendering>
