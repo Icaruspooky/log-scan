@@ -51,11 +51,8 @@
                                                    (StringUtils/substringAfter
                                                      (StringUtils/substringAfter
                                                        (str/join render) "Executing request startRendering")", ") "] "))
-                                    (xml/element :uid {}
-                                                 (StringUtils/substringBefore
-                                                   (StringUtils/substringAfter
-                                                     (StringUtils/substringAfter
-                                                       (str/join render) "Executing request startRendering") "{ RenderingCommand - uid: ") " }"))
+                                    (xml/element :uid {} (get-uid render))
+
                                     (for [td renders]
                                       (for [rend td]
                                         (if (str/includes? (str/join render) "Executing request startRendering")
